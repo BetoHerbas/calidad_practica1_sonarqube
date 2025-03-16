@@ -2,5 +2,5 @@ projectKey=pharmacy123
 serverUrl=http://localhost:9000
 serverVersion=25.3.0.104237
 dashboardUrl=http://localhost:9000/dashboard?id=pharmacy123
-ceTaskId=5d284648-b5e8-46d1-8196-8d40e7be6b9b
-ceTaskUrl=http://localhost:9000/api/ce/task?id=5d284648-b5e8-46d1-8196-8d40e7be6b9b
+ceTaskId=27a58f9c-242f-43c0-9984-6d253884e968
+ceTaskUrl=http://localhost:9000/api/ce/task?id=27a58f9c-242f-43c0-9984-6d253884e968

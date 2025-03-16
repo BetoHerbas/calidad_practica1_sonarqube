@@ -2310,9 +2310,11 @@ for ( i in { submit: true, reset: true } ) {
 }
 
 // Easy API for creating new setFilters
-function setFilters() {}
-setFilters.prototype = Expr.filters = Expr.pseudos;
-Expr.setFilters = new setFilters();
+function SetFilters() {
+	this.filters = {};
+}
+SetFilters.prototype = Expr.filters = Expr.pseudos;
+Expr.setFilters = new SetFilters();
 
 tokenize = Sizzle.tokenize = function( selector, parseOnly ) {
 	var matched, match, tokens, type,
