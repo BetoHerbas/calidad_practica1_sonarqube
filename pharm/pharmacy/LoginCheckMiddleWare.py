@@ -14,61 +14,37 @@ from django.conf import settings
 class LoginCheckMiddleWare(MiddlewareMixin):
    
     
+    USER_VIEWS = {
+        "1": "pharmacy.HODViews",
+        "2": "pharmacy.pharmacistViews",
+        "3": "pharmacy.DoctorViews",
+        "4": "pharmacy.clerkViews",
+        "5": "pharmacy.patient_view",
+    }
+
+    REDIRECTS = {
+        "2": "pharmacist_home",
+        "3": "doctor_home",
+        "4": "clerk_home",
+        "5": "patient_home",
+    }
+
+    ALLOWED_MODULES = {"pharmacy.views", "django.views.static", ""}
+
     def process_view(self, request, view_func, view_args, view_kwargs):
-        modulename = view_func.__module__
         user = request.user
+        modulename = view_func.__module__
 
-        if user.is_authenticated:
-            if user.user_type == "1":
-                
-                if modulename == "pharmacy.HODViews": 
-                    pass
-                elif modulename == "":
-                    pass
-                elif modulename == "pharmacy.views" or modulename == "django.views.static":
-                    pass
-                else:
-                    pass
-            
-            elif user.user_type == "2":
-                if modulename == "pharmacy.pharmacistViews":
-                    pass
-                elif modulename == "pharmacy.views" or modulename == "django.views.static":
-                    pass
-                else:
-                    return redirect("pharmacist_home")
-            elif user.user_type == "3":
-                if modulename == "pharmacy.DoctorViews":
-                    pass
-                elif modulename == "pharmacy.views" or modulename == "django.views.static":
-                    pass
-                else:
-                    return redirect("doctor_home")
-            elif user.user_type == "4":
-                if modulename == "pharmacy.clerkViews":
-                    pass
-                elif modulename == "pharmacy.views" or modulename == "django.views.static":
-                    pass
-                else:
+        if not user.is_authenticated:
+            return None if request.path == reverse("login") else redirect("login")
 
-                    return redirect("clerk_home")
-            elif user.user_type == "5":
-                if modulename == "pharmacy.patient_view":
-                    pass
-                elif modulename == "pharmacy.views" or modulename == "django.views.static":
-                    pass
-                else:
-                    return redirect("patient_home")
-            
-            else:
-                return redirect("login")
+        user_type = user.user_type
+        if user_type in self.USER_VIEWS:
+            if modulename in (self.USER_VIEWS[user_type], *self.ALLOWED_MODULES):
+                return None
+            return redirect(self.REDIRECTS.get(user_type, "login"))
 
-            
-        else:
-            if request.path == reverse("login"):
-                pass
-            else:
-                return redirect("login")
+        return redirect("login")
 
 
      #NB: Email confirmation will not occur       
