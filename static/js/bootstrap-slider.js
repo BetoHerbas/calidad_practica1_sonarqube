@@ -1695,19 +1695,23 @@ var windowIsDefined = (typeof window === "undefined" ? "undefined" : _typeof(win
 				ev.cancelBubble = true;
 				ev.returnValue = false;
 			},
-			_mousemove: function _mousemove(ev) {
+			mousemove: function _mousemove(ev) {
 				if (!this._state.enabled) {
-					return false;
+					return false; 
 				}
-
-				var percentage = this._getPercentage(ev);
+			
+				let percentage = this._getPercentage(ev);
 				this._adjustPercentageForRangeSliders(percentage);
 				this._state.percentage[this._state.dragged] = percentage;
-
-				var val = this._calculateValue(true);
+			
+				let val = this._calculateValue(true);
 				this.setValue(val, true, true);
-
-				return false;
+			
+				if (val === this._state.value) {
+					return null; 
+				}
+			
+				return true; 
 			},
 			_touchmove: function _touchmove(ev) {
 				if (ev.changedTouches === undefined) {
