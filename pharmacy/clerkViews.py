@@ -10,7 +10,7 @@ from .models import *
 
 
 @login_required
-def clerkHome(request):
+def clerk_home(request):
     patients=Patients.objects.all().count()
 
     context={
@@ -21,7 +21,7 @@ def clerkHome(request):
 
 
 @login_required
-def receptionistProfile(request):
+def receptionist_profile(request):
     customuser = CustomUser.objects.get(id=request.user.id)
     staff = PharmacyClerk.objects.get(admin=customuser.id)
 
@@ -63,7 +63,7 @@ def receptionistProfile(request):
 
     
 @login_required
-def createPatient(request):
+def create_patient(request):
     form=PatientForm(request.POST, request.FILES)
     try:
         if request.method == "POST":
@@ -102,7 +102,7 @@ def createPatient(request):
 
 
 @login_required
-def allPatients(request):
+def all_patients(request):
     patients=Patients.objects.all()
 
     context={
@@ -114,7 +114,7 @@ def allPatients(request):
 
 
 @login_required
-def editPatient(request,patient_id):
+def edit_patient(request,patient_id):
     request.session['patient_id'] = patient_id
 
     patient = Patients.objects.get(admin=patient_id)
@@ -183,7 +183,7 @@ def editPatient(request,patient_id):
        
 
 @login_required
-def patient_personalRecords(request,pk):
+def patient_personal_records(request,pk):
     patient=Patients.objects.get(id=pk)
     prescrip=patient.prescription_set.all()
 
@@ -192,11 +192,11 @@ def patient_personalRecords(request,pk):
         "prescription":prescrip
 
     }
-    return render(request,'clerk_templates/patient_personalRecords.html',context)
+    return render(request,'clerk_templates/patient_personal_records.html',context)
 
 
 @login_required
-def confirmDelete(request,pk):
+def confirm_delete(request,pk):
     try:
         patient=Patients.objects.get(id=pk)
         if request.method == 'POST':

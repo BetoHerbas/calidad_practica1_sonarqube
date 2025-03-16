@@ -9,7 +9,7 @@ from .models import *
 
 
 @login_required
-def patientHome(request):
+def patient_home(request):
     patient_obj = Patients.objects.get(admin=request.user.id)
 
     patient_dispen=patient_obj.dispense_set.all().count()
@@ -19,7 +19,7 @@ def patientHome(request):
     return render(request,'patient_templates/patient_home.html',context)
 
 @login_required
-def patientProfile(request):
+def patient_profile(request):
     customuser = CustomUser.objects.get(id=request.user.id)
     patien = Patients.objects.get(admin=customuser.id)
    
@@ -59,7 +59,7 @@ def patientProfile(request):
     return render(request,'patient_templates/patient_profile.html',context)
 
 
-def myPrescription(request):
+def my_prescription(request):
     precrip=Prescription.objects.all()
 
     patient = Patients.objects.all()
@@ -71,7 +71,7 @@ def myPrescription(request):
     }
     return render(request,'doctor_templates/myprescription.html' ,context)
 
-def myPrescriptionDelete(request):
+def my_prescription_delete(request):
     patient_obj = Patients.objects.get(admin=request.user.id)
     precrip=patient_obj.prescription_set.all()
     if request.method == "POST":
@@ -105,7 +105,7 @@ def patient_feedback_save(request):
         messages.success(request, "Feedback Sent.")
         return redirect('patient_feedback')
 
-def Patientdeletefeedback(request,pk):
+def patient_delete_feedback(request,pk):
     try:
         fed=PatientFeedback.objects.get(id=pk)
         if request.method == 'POST':

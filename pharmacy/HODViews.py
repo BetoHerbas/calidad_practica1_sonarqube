@@ -1,4 +1,4 @@
-from pharmacy.clerkViews import receptionistProfile
+from pharmacy.clerkViews import receptionist_profile
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
@@ -17,7 +17,7 @@ from .forms import *
 from .models import *
 
 
-def adminDashboard(request):
+def admin_dashboard(request):
     patients_total=Patients.objects.all().count()
     
     doctors=Doctor.objects.all().count()
@@ -51,7 +51,7 @@ def adminDashboard(request):
 
 
 
-def createPatient(request):
+def create_patient(request):
     form=PatientForm()
 
  
@@ -99,7 +99,7 @@ def createPatient(request):
 
 
 
-def allPatients(request):
+def all_patients(request):
     form=PatientSearchForm1(request.POST or None)
     patients=Patients.objects.all()
     context={
@@ -118,7 +118,7 @@ def allPatients(request):
         }
     return render(request,'hod_templates/admited_patients.html',context)
 
-def confirmDelete(request,pk):
+def confirm_delete(request,pk):
     try:
         patient=Patients.objects.get(id=pk)
         if request.method == 'POST':
@@ -141,7 +141,7 @@ def confirmDelete(request,pk):
 
     
 @login_required
-def createPharmacist(request):
+def create_pharmacist(request):
 
     if request.method == "POST":
            
@@ -173,7 +173,7 @@ def createPharmacist(request):
 
     return render(request,'hod_templates/pharmacist_form.html',context)
 
-def managePharmacist(request):
+def manage_pharmacist(request):
     staffs = Pharmacist.objects.all()
     context = {
         "staffs": staffs,
@@ -182,7 +182,7 @@ def managePharmacist(request):
 
     return render(request,'hod_templates/all_pharmacist.html',context)
 
-def createDoctor(request):
+def create_doctor(request):
 
     if request.method == "POST":
            
@@ -214,7 +214,7 @@ def createDoctor(request):
 
     return render(request,'hod_templates/add_doctor.html',context)
 
-def manageDoctor(request):
+def manage_doctor(request):
     staffs = Doctor.objects.all()
 
     context = {
@@ -225,7 +225,7 @@ def manageDoctor(request):
 
     return render(request,'hod_templates/manage_doctor.html',context)
 
-def createPharmacyClerk(request):
+def create_pharmacy_clerk(request):
 
     if request.method == "POST":
            
@@ -258,7 +258,7 @@ def createPharmacyClerk(request):
 
     return render(request,'hod_templates/add_pharmacyClerk.html',context)
 
-def managePharmacyClerk(request):
+def manage_pharmacy_clerk(request):
    
     
 
@@ -272,7 +272,7 @@ def managePharmacyClerk(request):
     return render(request,'hod_templates/manage_pharmacyClerk.html',context)
 
 
-def addStock(request):
+def add_stock(request):
     form=StockForm(request.POST,request.FILES)
     if form.is_valid():
         form=StockForm(request.POST,request.FILES)
@@ -287,7 +287,7 @@ def addStock(request):
     return render(request,'hod_templates/add_stock.html',context)
 
     
-def manageStock(request):
+def manage_stock(request):
     stocks = Stock.objects.all().order_by("-id")
     ex=Stock.objects.annotate(
     expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
@@ -307,7 +307,7 @@ def manageStock(request):
     return render(request,'hod_templates/manage_stock.html',context)
 
 
-def addCategory(request):
+def add_category(request):
     try:
         form=CategoryForm(request.POST or None)
 
@@ -329,7 +329,7 @@ def addCategory(request):
     }
     return render(request,'hod_templates/add_category.html',context)
 
-def addPrescription(request):
+def add_prescription(request):
     form=PrescriptionForm(request.POST or None)
     if form.is_valid():
         form.save()
@@ -344,7 +344,7 @@ def addPrescription(request):
 
 
     
-def editPatient(request,patient_id):
+def edit_patient(request,patient_id):
     # adds patient id into session variable
     request.session['patient_id'] = patient_id
 
@@ -418,7 +418,7 @@ def editPatient(request,patient_id):
        
 
     
-def patient_personalRecords(request,pk):
+def patient_personal_records(request,pk):
     patient=Patients.objects.get(id=pk)
     prescrip=patient.prescription_set.all()
     stocks=patient.dispense_set.all()
@@ -429,9 +429,9 @@ def patient_personalRecords(request,pk):
         "stocks":stocks
 
     }
-    return render(request,'hod_templates/patient_personalRecords.html',context)
+    return render(request,'hod_templates/patient_personal_records.html',context)
 
-def deletePrescription(request,pk):
+def delete_prescription(request,pk):
     prescribe=Prescription.objects.get(id=pk)
     if request.method == 'POST':
         prescribe.delete()
@@ -444,7 +444,7 @@ def deletePrescription(request,pk):
     return render(request,'hod_templates/sure_delete.html',context)
 
 
-def hodProfile(request):
+def hod_profile(request):
     customuser=CustomUser.objects.get(id=request.user.id)
     staff=AdminHOD.objects.get(admin=customuser.id)
 
@@ -480,7 +480,7 @@ def hodProfile(request):
 
     return render(request,'hod_templates/hod_profile.html',context)
 
-def deleteDoctor(request,pk):
+def delete_doctor(request,pk):
     try:
         doctor=Doctor.objects.get(id=pk)
         if request.method == 'POST':
@@ -497,7 +497,7 @@ def deleteDoctor(request,pk):
    
     return render(request,'hod_templates/sure_delete.html')
     
-def deletePharmacist(request,pk):
+def delete_pharmacist(request,pk):
     try:
         pharmacist=Pharmacist.objects.get(id=pk)
         if request.method == 'POST':
@@ -514,7 +514,7 @@ def deletePharmacist(request,pk):
    
     return render(request,'hod_templates/sure_delete.html')
 
-def deletePharmacyClerk(request,pk):
+def delete_pharmacy_clerk(request,pk):
     try:
         clerk=PharmacyClerk.objects.get(id=pk)
         if request.method == 'POST':
@@ -532,7 +532,7 @@ def deletePharmacyClerk(request,pk):
 
    
     return render(request,'hod_templates/sure_delete.html')
-def editPharmacist(request,staff_id):
+def edit_pharmacist(request,staff_id):
     staff = Pharmacist.objects.get(admin=staff_id)
     if request.method == "POST":
         
@@ -566,7 +566,7 @@ def editPharmacist(request,staff_id):
     return render(request, "hod_templates/edit_pharmacist.html", context)
 
 
-def editDoctor(request,doctor_id):
+def edit_doctor(request,doctor_id):
     staff = Doctor.objects.get(admin=doctor_id)
     if request.method == "POST":
         
@@ -597,7 +597,7 @@ def editDoctor(request,doctor_id):
     }
     return render(request, "hod_templates/edit_doctor.html", context)
 
-def editPharmacyClerk(request,clerk_id):
+def edit_pharmacy_clerk(request,clerk_id):
     clerk=PharmacyClerk.objects.get(admin=clerk_id)
     if request.method == "POST":
         username = request.POST.get('username')
@@ -637,7 +637,7 @@ def editPharmacyClerk(request,clerk_id):
     return render(request,'hod_templates/edit_clerk.html',context)
 
 
-def editAdmin(request):
+def edit_admin(request):
     customuser=CustomUser.objects.get(id=request.user.id)
     staff=AdminHOD.objects.get(admin=customuser.id)
 
@@ -674,7 +674,7 @@ def editAdmin(request):
     return render(request,'hod_templates/edit-profile.html',context)
 
 
-def editStock(request,pk):
+def edit_stock(request,pk):
     drugs=Stock.objects.get(id=pk)
     form=StockForm(request.POST or None,instance=drugs)
 
@@ -708,7 +708,7 @@ def editStock(request,pk):
     return render(request,'hod_templates/edit_drug.html',context)
 
 
-def deleteDrug(request,pk):
+def delete_drug(request,pk):
     try:
     
         drugs=Stock.objects.get(id=pk)
@@ -727,7 +727,7 @@ def deleteDrug(request,pk):
 
     return render(request,'hod_templates/sure_delete.html')
 
-def receiveDrug(request,pk):
+def receive_drug(request,pk):
     receive=Stock.objects.get(id=pk)
     form=ReceiveStockForm()
     try:
@@ -775,7 +775,7 @@ def reorder_level(request, pk):
 
     return render(request,'hod_templates/reorder_level.html',context)
 
-def drugDetails(request,pk):
+def drug_details(request,pk):
     stocks=Stock.objects.get(id=pk)
     # prescrip=stocks.prescription_set.all()
     # stocks=stocks.dispense_set.all()

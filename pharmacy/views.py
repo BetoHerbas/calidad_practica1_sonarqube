@@ -8,7 +8,7 @@ from .decorators import *
 # Create your views here.
 
 @unautheticated_user
-def loginPage(request):
+def login_page(request):
     
     if request.method == 'POST':
         username=request.POST.get('username')
@@ -43,6 +43,6 @@ def loginPage(request):
 
 
 
-def logoutUser(request):
+def logout_user(request):
     logout(request)
     return redirect('login')
