@@ -14,6 +14,10 @@
         
 ### Step 3
      python manage.py runserver
+
+### Step 4
+     create .env
+     add SECRET_KEY = 'django-insecure-ui1u$88tg97g-()a(^hcv5mn#jzcu^3yb1n=!s7kn-!t25932n'
 -----------------------------------------------------------------------------------
 
 ### Admin User Login: 
