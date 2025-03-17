@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
     'pharmacy-management-system2.herokuapp.com',
     '127.0.0.1',
     'localhost'
-]``
+]
 
 # Application definition
 
