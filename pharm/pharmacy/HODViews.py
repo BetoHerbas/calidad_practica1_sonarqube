@@ -17,6 +17,8 @@ from .forms import PatientForm, PatientSearchForm1, StockForm, CategoryForm, Pre
 from .models import Patients, CustomUser, Pharmacist, Stock, Prescription, Doctor, PharmacyClerk, AdminHOD
 
 
+TEMPLATE_SURE_DELETE = 'hod_templates/sure_delete.html'
+
 def admin_dashboard(request):
     patients_total=Patients.objects.all().count()
     
@@ -118,22 +120,22 @@ def all_patients(request):
         }
     return render(request,'hod_templates/admited_patients.html',context)
 
-def confirm_delete(request,pk):
+
+def confirm_delete(request, pk):
     try:
-        patient=Patients.objects.get(id=pk)
+        patient = Patients.objects.get(id=pk)
         if request.method == 'POST':
             patient.delete()
             return redirect('all_patients')
     except Exception as e:
-        messages.error(request, f"Patient Cannot be deleted  deleted , Patient is still on medication or an error occured: {str(e)}")
+        messages.error(request, f"Patient Cannot be deleted, Patient is still on medication or an error occurred: {str(e)}")
         return redirect('all_patients')
 
-    context={
-        "patient":patient,
-
+    context = {
+        "patient": patient,
     }
-    
-    return render(request,'hod_templates/sure_delete.html',context)
+
+    return render(request, TEMPLATE_SURE_DELETE, context)
 
 
 
@@ -437,7 +439,7 @@ def delete_prescription(request,pk):
         "patient":prescribe
     }
 
-    return render(request,'hod_templates/sure_delete.html',context)
+    return render(request,TEMPLATE_SURE_DELETE,context)
 
 
 def hod_profile(request):
@@ -491,7 +493,7 @@ def delete_doctor(request,pk):
 
 
    
-    return render(request,'hod_templates/sure_delete.html')
+    return render(request,TEMPLATE_SURE_DELETE)
     
 def delete_pharmacist(request,pk):
     try:
@@ -508,7 +510,7 @@ def delete_pharmacist(request,pk):
 
 
    
-    return render(request,'hod_templates/sure_delete.html')
+    return render(request,TEMPLATE_SURE_DELETE)
 
 def delete_pharmacy_clerk(request,pk):
     try:
@@ -527,7 +529,7 @@ def delete_pharmacy_clerk(request,pk):
 
 
    
-    return render(request,'hod_templates/sure_delete.html')
+    return render(request,TEMPLATE_SURE_DELETE)
 def edit_pharmacist(request,staff_id):
     staff = Pharmacist.objects.get(admin=staff_id)
     if request.method == "POST":
@@ -716,7 +718,7 @@ def delete_drug(request,pk):
 
 
 
-    return render(request,'hod_templates/sure_delete.html')
+    return render(request,TEMPLATE_SURE_DELETE)
 
 def receive_drug(request,pk):
     receive=Stock.objects.get(id=pk)

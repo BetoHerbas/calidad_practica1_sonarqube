@@ -133,7 +133,7 @@ def confirm_delete(request,pk):
 
     }
     
-    return render(request,'hod_templates/sure_delete.html',context)
+    return render(request,TEMPLATE_SURE_DELETE,context)
 
 
 
@@ -438,7 +438,7 @@ def delete_prescription(request,pk):
         "patient":prescribe
     }
 
-    return render(request,'hod_templates/sure_delete.html',context)
+    return render(request,TEMPLATE_SURE_DELETE,context)
 
 
 def hod_profile(request):
@@ -492,7 +492,7 @@ def delete_doctor(request,pk):
 
 
    
-    return render(request,'hod_templates/sure_delete.html')
+    return render(request,TEMPLATE_SURE_DELETE)
     
 def delete_pharmacist(request,pk):
     try:
@@ -509,7 +509,7 @@ def delete_pharmacist(request,pk):
 
 
    
-    return render(request,'hod_templates/sure_delete.html')
+    return render(request,TEMPLATE_SURE_DELETE)
 
 def delete_pharmacy_clerk(request,pk):
     try:
@@ -528,7 +528,7 @@ def delete_pharmacy_clerk(request,pk):
 
 
    
-    return render(request,'hod_templates/sure_delete.html')
+    return render(request,TEMPLATE_SURE_DELETE)
 def edit_pharmacist(request,staff_id):
     staff = Pharmacist.objects.get(admin=staff_id)
     if request.method == "POST":
@@ -716,7 +716,7 @@ def delete_drug(request,pk):
 
 
 
-    return render(request,'hod_templates/sure_delete.html')
+    return render(request,TEMPLATE_SURE_DELETE)
 
 def receive_drug(request,pk):
     receive=Stock.objects.get(id=pk)
