@@ -308,26 +308,23 @@ def manage_stock(request):
 
 
 def add_category(request):
-    try:
-        form=CategoryForm(request.POST or None)
+    form = CategoryForm(request.POST or None)
 
-        if request.method == 'POST':
-            if form.is_valid():
-                form.save()
-                messages.success(request, "Category added Successfully!")
+    if request.method == 'POST' and form.is_valid():
+        try:
+            form.save()
+            messages.success(request, "Category added Successfully!")
+            return redirect('add_category')
+        except Exception:
+            messages.error(request, "Category Not added! Try again")
+            return redirect('add_category')
 
-                return redirect('add_category')
-    except Exception:
-        messages.error(request, "Category Not added! Try again")
-
-        return redirect('add_category')
-
-    
-    context={
-        "form":form,
-        "title":"Add a New Drug Category"
+    context = {
+        "form": form,
+        "title": "Add a New Drug Category"
     }
-    return render(request,'hod_templates/add_category.html',context)
+    return render(request, 'hod_templates/add_category.html', context)
+
 
 def add_prescription(request):
     form=PrescriptionForm(request.POST or None)
@@ -674,38 +671,32 @@ def edit_admin(request):
     return render(request,'hod_templates/edit-profile.html',context)
 
 
-def edit_stock(request,pk):
-    drugs=Stock.objects.get(id=pk)
-    form=StockForm(request.POST or None,instance=drugs)
+def edit_stock(request, pk):
+    drugs = Stock.objects.get(id=pk)
+    form = StockForm(request.POST or None, instance=drugs)
 
-    if request.method == "POST":
-        if form.is_valid():
-            form=StockForm(request.POST or None ,instance=drugs)
+    if request.method == "POST" and form.is_valid():
+        category = request.POST.get('category')
+        drug_name = request.POST.get('drug_name')
+        quantity = request.POST.get('quantity')
+        # email = request.POST.get('email')
 
-            category=request.POST.get('category')
-            drug_name=request.POST.get('drug_name')
-            quantity=request.POST.get('quantity')
-            # email=request.POST.get('email')
+        try:
+            drugs.drug_name = drug_name
+            drugs.quantity = quantity
+            drugs.save()
+            form.save()
+            messages.success(request, 'Receptionist Updated Successfully')
+        except Exception:
+            messages.error(request, 'An Error Was Encountered. Receptionist Not Updated')
 
-            try:
-                drugs =Stock.objects.get(id=pk)
-                drugs.drug_name=drug_name
-                drugs.quantity=quantity
-                drugs.save()
-                form.save()
-                messages.success(request,'Receptionist Updated Succefully')
-            except Exception:
-                messages.error(request,'An Error Was Encounterd Receptionist Not Updated')
-
-
-        
-    context={
-        "drugs":drugs,
-         "form":form,
-         "title":"Edit Stock"
-
+    context = {
+        "drugs": drugs,
+        "form": form,
+        "title": "Edit Stock"
     }
-    return render(request,'hod_templates/edit_drug.html',context)
+    return render(request, 'hod_templates/edit_drug.html', context)
+
 
 
 def delete_drug(request,pk):
