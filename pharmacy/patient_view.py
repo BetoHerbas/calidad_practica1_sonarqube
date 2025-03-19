@@ -113,7 +113,7 @@ def patient_delete_feedback(request,pk):
             messages.success(request, "Feedback  deleted successfully")
             return redirect('patient_feedback')
 
-    except:
+    except Exception:
         messages.error(request, "Feedback Error, Please Check again")
         return redirect('patient_feedback')
 

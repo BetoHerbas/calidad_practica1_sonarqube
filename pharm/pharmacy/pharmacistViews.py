@@ -174,7 +174,7 @@ def manage_dispense(request,pk):
                 "expa":eo,
 
             }
-    except:
+    except Exception:
         messages.error(request, "Dispensing Not Allowed! The Drug is Expired ,please contanct the admin for re-stock ")
         return redirect('manage_patient_pharmacist')
     context={
@@ -209,7 +209,7 @@ def patient_feedback_message_reply(request):
         feedback.save()
         return HttpResponse("True")
 
-    except:
+    except Exception:
         return HttpResponse("False")
 
 def delete_feedback(request,pk):
@@ -220,7 +220,7 @@ def delete_feedback(request,pk):
             messages.success(request, "Feedback  deleted successfully")
             return redirect('patient_feedback_message')
 
-    except:
+    except Exception:
         messages.error(request, "Feedback Error, Please Check again")
         return redirect('patient_feedback_message')
 
@@ -250,7 +250,7 @@ def delete_dispense4(request,pk):
             messages.success(request, "Dispense  deleted successfully")
             return redirect('pharmacist_prescription')
 
-    except:
+    except Exception:
         messages.error(request, "Delete Error, Please Check again")
         return redirect('pharmacist_prescription')
 

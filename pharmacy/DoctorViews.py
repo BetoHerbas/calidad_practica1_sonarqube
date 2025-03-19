@@ -66,7 +66,7 @@ def add_prescription(request,pk):
                 form.save()
                 messages.success(request,'Prescription added successfully')
                 return redirect('manage_precrip_doctor')
-        except:
+        except Exception:
             messages.error(request,'Prescription Not Added')
             return redirect('manage_patient-doctor')
 
@@ -97,7 +97,7 @@ def delete_prescription(request,pk):
             prescribe.delete()
             messages.success(request,'Prescription Deleted successfully')
             return redirect('manage_precrip_doctor')
-        except:
+        except Exception:
             messages.error(request,'Prescription Not Deleted successfully')
             return redirect('manage_precrip_doctor')
 
@@ -136,7 +136,7 @@ def edit_prescription(request,pk):
 
                 messages.success(request,'Prescription Updated successfully')
                 return redirect('manage_precrip_doctor')
-        except:
+        except Exception:
             messages.error(request,' Error!! Prescription Not Updated')
             return redirect('manage_precrip_doctor')
 

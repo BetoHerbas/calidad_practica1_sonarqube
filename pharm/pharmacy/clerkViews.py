@@ -89,8 +89,7 @@ def create_patient(request):
             messages.success(request, "Patient Added Successfully!")
             return redirect('patient_form2')
             
-    except:
-        
+    except Exception:
         messages.error(request,'Patient Not Saved')
         return redirect('patient_form2')
     context={
@@ -164,10 +163,10 @@ def edit_patient(request,patient_id):
                     patients_edit.save()
                     messages.success(request, "Patient Updated Successfully!")
                     return redirect('all_patients2')
-                except:
+                except Exception:
                     messages.error(request, "Failed to Update Patient.")
                     return redirect('all_patients2')
-    except:
+    except Exception: 
          messages.error(request, "Invalid Error!")
          return redirect('all_patients')
 
@@ -203,7 +202,7 @@ def confirm_delete(request,pk):
             messages.success(request, "Staff  deleted")
 
             return redirect('all_patients2')
-    except:
+    except Exception:
         messages.error(request, "Patient Cannot be deleted  deleted , Patient is still on medication or an error occured")
         return redirect('all_patients2')
 

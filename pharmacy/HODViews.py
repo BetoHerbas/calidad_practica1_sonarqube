@@ -124,7 +124,7 @@ def confirm_delete(request,pk):
         if request.method == 'POST':
             patient.delete()
             return redirect('all_patients')
-    except:
+    except Exception:
         messages.error(request, "Patient Cannot be deleted  deleted , Patient is still on medication or an error occured")
         return redirect('all_patients')
 
@@ -202,7 +202,7 @@ def create_doctor(request):
             user.save()
             messages.success(request, "Staff Added Successfully!")
             return redirect('add_doctor')
-        except:
+        except Exception:
             messages.error(request, "Failed to Add Staff!")
             return redirect('add_doctor')
 
@@ -246,7 +246,7 @@ def create_pharmacy_clerk(request):
             user.save()
             messages.success(request, "Staff Added Successfully!")
             return redirect('add_pharmacyClerk')
-        except:
+        except Exception:
             messages.error(request, "Failed to Add Staff!")
             return redirect('add_pharmacyClerk')
 
@@ -317,7 +317,7 @@ def add_category(request):
                 messages.success(request, "Category added Successfully!")
 
                 return redirect('add_category')
-    except:
+    except Exception:
         messages.error(request, "Category Not added! Try again")
 
         return redirect('add_category')
@@ -401,7 +401,7 @@ def edit_patient(request,patient_id):
                 patients_edit.save()
                 messages.success(request, "Patient Updated Successfully!")
                 return redirect('all_patients')
-            except:
+            except Exception:
                 messages.success(request, "Failed to Update Patient.")
                 return redirect('all_patients')
 
@@ -489,7 +489,7 @@ def delete_doctor(request,pk):
 
             return redirect('manage_doctor')
 
-    except:
+    except Exception:
         messages.error(request, "Doctor aready deleted")
         return redirect('manage_doctor')
 
@@ -506,7 +506,7 @@ def delete_pharmacist(request,pk):
                 
             return redirect('manage_pharmacist')
 
-    except:
+    except Exception:
         messages.error(request, "Pharmacist aready deleted")
         return redirect('manage_pharmacist')
 
@@ -525,7 +525,7 @@ def delete_pharmacy_clerk(request,pk):
                 
             return redirect('manage_pharmacyClerk')
 
-    except:
+    except Exception:
         messages.error(request, "Pharmacy  Clerk Not deleted")
         return redirect('manage_pharmacyClerk')
 
@@ -623,7 +623,7 @@ def edit_pharmacy_clerk(request,clerk_id):
             clerk.save()
 
             messages.success(request,'Receptionist Updated Succefully')
-        except:
+        except Exception:
             messages.success(request,'An Error Was Encounterd Receptionist Not Updated')
 
 
@@ -694,7 +694,7 @@ def edit_stock(request,pk):
                 drugs.save()
                 form.save()
                 messages.success(request,'Receptionist Updated Succefully')
-            except:
+            except Exception:
                 messages.error(request,'An Error Was Encounterd Receptionist Not Updated')
 
 
@@ -719,7 +719,7 @@ def delete_drug(request,pk):
                 
             return redirect('manage_stock')
 
-    except:
+    except Exception:
         messages.error(request, "Pharmacist aready deleted")
         return redirect('manage_stock')
 
@@ -746,7 +746,7 @@ def receive_drug(request,pk):
             return redirect('manage_stock')
 
       
-    except:
+    except Exception:
         messages.error(request,"An Error occured, Drug quantity Not added")
                 
         return redirect('manage_stock')
