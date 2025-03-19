@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
-from .decorators import *
+from .decorators import unautheticated_user
 from django.contrib.auth.decorators import login_required
 
-from .forms import *
-from .models import *
+from .forms import PatientPicForm1
+from .models import Patients, CustomUser, Prescription, PatientFeedback
 
 
 @login_required

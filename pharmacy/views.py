@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 
 from django.contrib import messages
-from .decorators import *
+from .decorators import unautheticated_user
 
 # Create your views here.
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import *
+from .models import CustomUser, Patients, Pharmacist, AdminHOD, Stock, Category, Doctor, PharmacyClerk, Prescription, Dispense, PatientFeedback
 
 class PatientsAdmin(admin.ModelAdmin):
     list_display = ('admin','gender')

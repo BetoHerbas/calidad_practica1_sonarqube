@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import *
+from .models import Patients, Stock, Category, Prescription, Pharmacist, Doctor, PharmacyClerk, AdminHOD, Dispense, CustomUser
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User

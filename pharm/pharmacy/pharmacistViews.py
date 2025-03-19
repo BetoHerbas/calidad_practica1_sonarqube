@@ -2,13 +2,15 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from django.contrib.auth.forms import  UserCreationForm
-from .decorators import *
+from .decorators import unautheticated_user
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-from django.http import HttpResponseRedirect
-from .forms import *
-from .models import *
+from django.http import HttpResponseRedirect, HttpResponse
+from django.db.models import ExpressionWrapper, Q, BooleanField
+from django.utils.timezone import Now
+from .forms import CustomerForm, DispenseForm 
+from .models import Patients, CustomUser, Pharmacist, Stock, Dispense, PatientFeedback
 
 
 @login_required

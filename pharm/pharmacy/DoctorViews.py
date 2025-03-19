@@ -1,11 +1,9 @@
-from django.shortcuts import render,redirect
-from django.contrib.auth import authenticate,login,logout
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.forms import  UserCreationForm
-from .decorators import *
 
-from .forms import *
-from .models import *
+from .forms import DoctorForm, PrescriptionForm
+from .models import CustomUser, Doctor, Patients, Prescription
 
 def doctor_home(request): 
     prescip = Prescription.objects.all().count()

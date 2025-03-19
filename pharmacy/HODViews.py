@@ -3,18 +3,18 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from django.contrib.auth.forms import  UserCreationForm
-from .decorators import *
+from .decorators import unautheticated_user
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone, dateformat
 from django.core.exceptions import ValidationError
 from datetime import datetime
-from django.db.models import Q
+from django.db.models import Q, ExpressionWrapper, BooleanField
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import datetime 
 
 
-from .forms import *
-from .models import *
+from .forms import PatientForm, PatientSearchForm1, StockForm, CategoryForm, PrescriptionForm, StockForm, ReceiveStockForm, ReorderLevelForm, EditPatientForm, HodForm
+from .models import Patients, CustomUser, Pharmacist, Stock, Prescription, Doctor, PharmacyClerk, AdminHOD
 
 
 def admin_dashboard(request):
@@ -31,7 +31,7 @@ def admin_dashboard(request):
     for_today = Patients.objects.filter(date_admitted__year=today.year, date_admitted__month=today.month, date_admitted__day=today.day).count()
     print(for_today)
     exipred=Stock.objects.annotate(
-    expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
+    expired=ExpressionWrapper(Q(valid_to__lt=timezone.now()), output_field=BooleanField())
     ).filter(expired=True).count()
      
 
@@ -290,10 +290,10 @@ def add_stock(request):
 def manage_stock(request):
     stocks = Stock.objects.all().order_by("-id")
     ex=Stock.objects.annotate(
-    expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
+    expired=ExpressionWrapper(Q(valid_to__lt=timezone.now()), output_field=BooleanField())
     ).filter(expired=True)
     eo=Stock.objects.annotate(
-    expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
+    expired=ExpressionWrapper(Q(valid_to__lt=timezone.now()), output_field=BooleanField())
     ).filter(expired=False)
     
 

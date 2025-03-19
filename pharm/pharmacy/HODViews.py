@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from django.contrib.auth.forms import  UserCreationForm
-from .decorators import *
+from .decorators import unautheticated_user
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone, dateformat
 from django.core.exceptions import ValidationError
@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import datetime 
 
 
-from .forms import *
+from .forms import PatientForm, PatientSearchForm1, StockForm, CategoryForm, PrescriptionForm, StockForm, ReceiveStockForm, ReorderLevelForm, EditPatientForm, HodForm
 from .models import *
 
 
