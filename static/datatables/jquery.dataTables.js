@@ -2342,72 +2342,50 @@
 	 *    column index and the definition for that column.
 	 *  @memberof DataTable#oApi
 	 */
-	function _fnApplyColumnDefs( oSettings, aoColDefs, aoCols, fn )
-	{
-		var i, iLen, j, jLen, k, kLen, def;
-		var columns = oSettings.aoColumns;
-	
-		// Column definitions with aTargets
-		if ( aoColDefs )
-		{
-			/* Loop over the definitions array - loop in reverse so first instance has priority */
-			for ( i=aoColDefs.length-1 ; i>=0 ; i-- )
-			{
-				def = aoColDefs[i];
-	
-				/* Each definition can target multiple columns, as it is an array */
-				var aTargets = def.targets !== undefined ?
-					def.targets :
-					def.aTargets;
-	
-				if ( ! Array.isArray( aTargets ) )
-				{
-					aTargets = [ aTargets ];
-				}
-	
-				for ( j=0, jLen=aTargets.length ; j<jLen ; j++ )
-				{
-					if ( typeof aTargets[j] === 'number' && aTargets[j] >= 0 )
-					{
-						/* Add columns that we don't yet know about */
-						while( columns.length <= aTargets[j] )
-						{
-							_fnAddColumn( oSettings );
-						}
-	
-						/* Integer, basic index */
-						fn( aTargets[j], def );
-					}
-					else if ( typeof aTargets[j] === 'number' && aTargets[j] < 0 )
-					{
-						/* Negative integer, right to left column counting */
-						fn( columns.length+aTargets[j], def );
-					}
-					else if ( typeof aTargets[j] === 'string' )
-					{
-						/* Class name matching on TH element */
-						for ( k=0, kLen=columns.length ; k<kLen ; k++ )
-						{
-							if ( aTargets[j] == "_all" ||
-							     $(columns[k].nTh).hasClass( aTargets[j] ) )
-							{
-								fn( k, def );
-							}
-						}
-					}
-				}
-			}
-		}
-	
-		// Statically defined columns array
-		if ( aoCols )
-		{
-			for ( i=0, iLen=aoCols.length ; i<iLen ; i++ )
-			{
-				fn( i, aoCols[i] );
-			}
-		}
-	}
+	function _fnApplyColumnDefs(oSettings, aoColDefs, aoCols, fn) {
+    const columns = oSettings.aoColumns;
+    
+    if (aoColDefs) {
+        for (let i = aoColDefs.length - 1; i >= 0; i--) {
+            const def = aoColDefs[i];
+            const aTargets = Array.isArray(def.targets ?? def.aTargets) 
+                ? def.targets ?? def.aTargets 
+                : [def.targets ?? def.aTargets];
+
+            aTargets.forEach(target => {
+                if (typeof target === 'number') {
+                    applyNumericTarget(columns, target, oSettings, fn, def);
+                } else if (typeof target === 'string') {
+                    applyStringTarget(columns, target, fn, def);
+                }
+            });
+        }
+    }
+    
+    if (aoCols) {
+        aoCols.forEach((col, i) => fn(i, col));
+    }
+}
+
+function applyNumericTarget(columns, target, oSettings, fn, def) {
+    if (target >= 0) {
+        while (columns.length <= target) {
+            _fnAddColumn(oSettings);
+        }
+        fn(target, def);
+    } else {
+        fn(columns.length + target, def);
+    }
+}
+
+function applyStringTarget(columns, target, fn, def) {
+    columns.forEach((col, index) => {
+        if (target === "_all" || $(col.nTh).hasClass(target)) {
+            fn(index, def);
+        }
+    });
+}
+
 	
 	/**
 	 * Add a data array to the table, creating DOM node etc. This is the parallel to
