@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 from phonenumber_field.formfields import PhoneNumberField
 from django.core.validators import RegexValidator
 
+REQUIRED_FIELD_MSG = "This field is required"
+
 import json
 class PatientPicForm1(forms.ModelForm):
     class Meta:
@@ -45,7 +47,7 @@ class PatientForm(forms.Form):
     def clean_reg_no(self):
         reg_no = self.cleaned_data['reg_no']
         if  not  reg_no:
-            raise ValidationError("This field is required")
+            raise ValidationError(REQUIRED_FIELD_MSG)
         for instance in Patients.objects.all():
             if instance.reg_no==reg_no:
                 raise ValidationError( "Registration number aready exist")
@@ -68,7 +70,7 @@ class PatientForm(forms.Form):
     def clean_username(self):
         username = self.cleaned_data['username']
         if  not  username:
-            raise ValidationError("This field is required")
+            raise ValidationError(REQUIRED_FIELD_MSG)
         for instance in CustomUser.objects.all():
             if instance.username==username:
                 raise ValidationError( "Username aready exist")
@@ -77,13 +79,13 @@ class PatientForm(forms.Form):
     def clean_firstName(self):
         first_name = self.cleaned_data['first_name']
         if  not  first_name:
-            raise ValidationError("This field is required")
+            raise ValidationError(REQUIRED_FIELD_MSG)
         return first_name
 
     def clean_secondName(self):
         last_name = self.cleaned_data['last_name']
         if  not  last_name:
-            raise ValidationError("This field is required")
+            raise ValidationError(REQUIRED_FIELD_MSG)
         return last_name
 
 class EditPatientForm(forms.Form):
@@ -100,7 +102,6 @@ class EditPatientForm(forms.Form):
     )
     gender = forms.ChoiceField(label="Gender", choices=gender_list, widget=forms.Select(attrs={"class":"form-control"}))
     dob= forms.DateField(label="dob", widget=DateInput(attrs={"class":"form-control"}))
-   
     
     
 
@@ -130,8 +131,6 @@ class CustomerForm(ModelForm):
         exclude=['admin','gender','mobile','address']
 
 
-       
-
 class DoctorForm(ModelForm):
     class Meta:
         model=Doctor
@@ -141,7 +140,7 @@ class DoctorForm(ModelForm):
         def clean_firstName(self):
             first_name = self.cleaned_data['first_name']
             if  not  first_name:
-                raise ValidationError("This field is required")
+                raise ValidationError(REQUIRED_FIELD_MSG)
             return first_name
 
         def clean_mobile(self):
@@ -152,7 +151,7 @@ class DoctorForm(ModelForm):
         def clean_username(self):
             username = self.cleaned_data['username']
             if  not  username:
-                raise ValidationError("This field is required")
+                raise ValidationError(REQUIRED_FIELD_MSG)
             for instance in CustomUser.objects.all():
                 if instance.username==username:
                     raise ValidationError( "Username aready exist")
@@ -175,17 +174,16 @@ class PatientSearchForm1(ModelForm):
         fields='__all__'
         exclude=['profile_pic','gender','mobile','address','dob']
 class PatientForm7(ModelForm):
-     class Meta:
+    class Meta:
         model=Patients
         fields='__all__'
 
 
 class DispenseForm(ModelForm):
     # gender_list = (
-       
     # )
     # drug_id = forms.ChoiceField(label="Gender", choices=gender_list, widget=forms.Select(attrs={"class":"form-control"}))
-   
+
     class Meta:
         model=Dispense
         fields='__all__'
@@ -193,7 +191,7 @@ class DispenseForm(ModelForm):
         
     #     drug_id = forms.CharField(label="Last Name", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
     # # def updateItem(self,request):
- 
+
     #     data=json.loads(request.body)
     #     drugId=data['drugId']
     #     print('ACTION:',drugId)
@@ -208,7 +206,7 @@ class DispenseForm(ModelForm):
         
     # #     # instance.save()
     #     return JsonResponse('jamara dd',  safe=False)
- 
+
 class ReceiveStockForm(ModelForm):
     valid_to= forms.DateField(label="Expiry Date", widget=DateInput(attrs={"class":"form-control"}))
 
