@@ -7,6 +7,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 
+PHARMACY_PATIENTS = 'pharmacy.patients'
 
 class Migration(migrations.Migration):
 
@@ -113,7 +114,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(null=True)),
                 ('prescribe', models.CharField(max_length=100, null=True)),
                 ('date_precribed', models.DateTimeField(auto_now_add=True)),
-                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='pharmacy.patients')),
+                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=PHARMACY_PATIENTS)),
             ],
         ),
         migrations.CreateModel(
@@ -156,7 +157,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('admin_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='pharmacy.adminhod')),
-                ('patient_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='pharmacy.patients')),
+                ('patient_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=PHARMACY_PATIENTS)),
                 ('pharmacist_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='pharmacy.pharmacist')),
             ],
         ),
@@ -185,7 +186,7 @@ class Migration(migrations.Migration):
                 ('instructions', models.TextField(max_length=300, null=True)),
                 ('dispense_at', models.DateTimeField(auto_now_add=True, null=True)),
                 ('drug_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='pharmacy.stock')),
-                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='pharmacy.patients')),
+                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=PHARMACY_PATIENTS)),
             ],
         ),
     ]

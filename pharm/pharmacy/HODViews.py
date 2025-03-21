@@ -35,7 +35,7 @@ def admin_dashboard(request):
     exipred=Stock.objects.annotate(
     expired=ExpressionWrapper(Q(valid_to__lt=Now()), output_field=BooleanField())
     ).filter(expired=True).count()
-     
+
 
 
     context={
@@ -56,7 +56,7 @@ def admin_dashboard(request):
 def create_patient(request):
     form=PatientForm()
 
- 
+
     if request.method == "POST":
         form=PatientForm(request.POST, request.FILES)
 
@@ -89,14 +89,12 @@ def create_patient(request):
 
             return redirect('patient_form')
 
-          
-   
 
     context={
         "form":form,
         "title":"Add Patient"
     }
-       
+
     return render(request,'hod_templates/patient_form.html',context)
 
 
@@ -113,7 +111,6 @@ def all_patients(request):
         # admin=form['first_name'].value()
         name = request.POST.get('search')
         patients=Patients.objects.filter(first_name__icontains=name) 
-       
         context={
             "patients":patients,
             form:form
@@ -146,7 +143,6 @@ def confirm_delete(request, pk):
 def create_pharmacist(request):
 
     if request.method == "POST":
-           
         username = request.POST.get('username')
         email = request.POST.get('email')
         first_name = request.POST.get('first_name')
@@ -154,7 +150,6 @@ def create_pharmacist(request):
         address = request.POST.get('address')
         mobile = request.POST.get('mobile')
         password = request.POST.get('password')
-           
         
         user = CustomUser.objects.create_user(username=username, email=email,password=password, first_name=first_name, last_name=last_name,user_type=2)
         user.first_name=first_name
@@ -165,7 +160,6 @@ def create_pharmacist(request):
         user.save()
         messages.success(request, "Staff Added Successfully!")
         return redirect('add_pharmacist')
-       
 
     context={
     "title":"Add Pharmacist"
@@ -187,7 +181,6 @@ def manage_pharmacist(request):
 def create_doctor(request):
 
     if request.method == "POST":
-           
         username = request.POST.get('username')
         email = request.POST.get('email')
         first_name = request.POST.get('first_name')
@@ -195,7 +188,6 @@ def create_doctor(request):
         address = request.POST.get('address')
         mobile = request.POST.get('mobile')
         password = request.POST.get('password')
-           
         try:
             user = CustomUser.objects.create_user(username=username, email=email,password=password, first_name=first_name, last_name=last_name,user_type=3)
             user.doctor.address = address
@@ -230,7 +222,6 @@ def manage_doctor(request):
 def create_pharmacy_clerk(request):
 
     if request.method == "POST":
-           
         username = request.POST.get('username')
         email = request.POST.get('email')
         first_name = request.POST.get('first_name')
@@ -238,7 +229,6 @@ def create_pharmacy_clerk(request):
         address = request.POST.get('address')
         mobile = request.POST.get('mobile')
         password = request.POST.get('password')
-           
         try:
             user = CustomUser.objects.create_user(username=username, email=email,password=password, first_name=first_name, last_name=last_name, user_type=4)
             user.pharmacyclerk.address = address
@@ -261,14 +251,13 @@ def create_pharmacy_clerk(request):
     return render(request,'hod_templates/add_pharmacyClerk.html',context)
 
 def manage_pharmacy_clerk(request):
-   
     
 
 
     staffs = PharmacyClerk.objects.all()
     context = {
         "staffs": staffs,
-         "title":"Manage PharmacyClerk"
+        "title":"Manage PharmacyClerk"
     }
 
     return render(request,'hod_templates/manage_pharmacyClerk.html',context)
@@ -413,7 +402,7 @@ def edit_patient(request,patient_id):
     return render(request, "hod_templates/edit_patient.html", context)
 
 
-       
+
 
     
 def patient_personal_records(request,pk):
@@ -528,7 +517,7 @@ def delete_pharmacy_clerk(request,pk):
         return redirect('manage_pharmacyClerk')
 
 
-   
+
     return render(request,TEMPLATE_SURE_DELETE)
 def edit_pharmacist(request,staff_id):
     staff = Pharmacist.objects.get(admin=staff_id)
@@ -644,7 +633,6 @@ def edit_admin(request):
     if request.method == 'POST':
         first_name=request.POST.get('first_name')
         last_name=request.POST.get('last_name')
-       
         address = request.POST.get('address')
         mobile = request.POST.get('mobile')
 
@@ -656,7 +644,6 @@ def edit_admin(request):
         staff=AdminHOD.objects.get(admin=customuser.id)
         form =HodForm(request.POST,request.FILES,instance=staff)
         staff.address = address
-       
         staff.mobile=mobile
         staff.save()
 
@@ -737,8 +724,6 @@ def receive_drug(request,pk):
             messages.success(request, str(instance.receive_quantity) + " " + instance.drug_name +" "+ "drugs added successfully")
 
             return redirect('manage_stock')
-
-      
     except Exception:
         messages.error(request,"An Error occured, Drug quantity Not added")
                 

@@ -15,7 +15,6 @@ class PatientPicForm1(forms.ModelForm):
         model=Patients
         fields='__all__'
         exclude=['admin','gender','mobile','address','dob']
-      
 
 
 class DateInput(forms.DateInput):
@@ -50,7 +49,6 @@ class PatientForm(forms.Form):
         for instance in Patients.objects.all():
             if instance.reg_no==reg_no:
                 raise ValidationError( "Registration number aready exist")
-      
         return reg_no
 
 
@@ -67,7 +65,6 @@ class PatientForm(forms.Form):
         return phone_number
         
             
-   
     def clean_username(self):
         username = self.cleaned_data['username']
         if  not  username:
@@ -75,7 +72,6 @@ class PatientForm(forms.Form):
         for instance in CustomUser.objects.all():
             if instance.username==username:
                 raise ValidationError( "Username aready exist")
-      
         return username
 
     def clean_firstName(self):
