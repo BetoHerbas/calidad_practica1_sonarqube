@@ -123,108 +123,112 @@ class StockForm(forms.ModelForm):
 
 class CategoryForm(forms.ModelForm):
     class Meta:
-        model=Category
-        fields='__all__'
+        model = Category
+        fields = ["name"]
 
 
 class PrescriptionForm(forms.ModelForm):
     class Meta:
-        model=Prescription
-        fields='__all__' 
+        model = Prescription
+        fields = ["patient_id", "description", "prescribe", "date_precribed"]
+
 
 class CustomerForm(ModelForm):
     class Meta:
-        model=Pharmacist
-        fields='__all__'
-        exclude=['admin','gender','mobile','address']
+        model = Pharmacist
+        fields = ["emp_no", "age", "profile_pic", "created_at", "updated_at"]
 
-
-       
 
 class DoctorForm(ModelForm):
     class Meta:
-        model=Doctor
-        fields='__all__'
-        exclude=['admin','gender','mobile','address']
+        model = Doctor
+        fields = ["emp_no", "age", "profile_pic", "created_at", "updated_at"]
 
-        def clean_firstName(self):
-            first_name = self.cleaned_data['first_name']
-            if  not  first_name:
-                raise ValidationError(self.FIELD_REQUIRED_MSG)
-            return first_name
+    def clean_firstName(self):
+        first_name = self.cleaned_data["first_name"]
+        if not first_name:
+            raise ValidationError(self.FIELD_REQUIRED_MSG)
+        return first_name
 
-        def clean_mobile(self):
-            mobile=self.cleaned_data.get('mobile')
-            if not mobile:
-                raise forms.ValidationError(self.FIELD_REQUIRED_MSG)
-            return mobile
-        def clean_username(self):
-            username = self.cleaned_data['username']
-            if  not  username:
-                raise ValidationError(self.FIELD_REQUIRED_MSG)
-            for instance in CustomUser.objects.all():
-                if instance.username==username:
-                    raise ValidationError( "Username aready exist")
+    def clean_mobile(self):
+        mobile = self.cleaned_data.get("mobile")
+        if not mobile:
+            raise forms.ValidationError(self.FIELD_REQUIRED_MSG)
+        return mobile
+
+    def clean_username(self):
+        username = self.cleaned_data["username"]
+        if not username:
+            raise ValidationError(self.FIELD_REQUIRED_MSG)
+        for instance in CustomUser.objects.all():
+            if instance.username == username:
+                raise ValidationError("Username already exists")
+
 
 class ClerkForm(ModelForm):
     class Meta:
-        model=PharmacyClerk
-        fields='__all__'
-        exclude=['admin','gender','mobile','address']
+        model = PharmacyClerk
+        fields = ["emp_no", "profile_pic", "created_at", "updated_at"]
+
+
 class HodForm(ModelForm):
     class Meta:
-        model=AdminHOD
-        fields='__all__'
-        exclude=['admin','gender','mobile','address']
+        model = AdminHOD
+        fields = ["emp_no", "profile_pic", "created_at", "updated_at"]
+
 
 class PatientSearchForm1(ModelForm):
-    
     class Meta:
-        model=Patients
-        fields='__all__'
-        exclude=['profile_pic','gender','mobile','address','dob']
+        model = Patients
+        fields = ["reg_no", "first_name", "last_name", "age", "date_admitted", "last_updated"]
+
+
 class PatientForm7(ModelForm):
-     class Meta:
-        model=Patients
-        fields='__all__'
+    class Meta:
+        model = Patients
+        fields = [
+            "reg_no",
+            "first_name",
+            "last_name",
+            "dob",
+            "phone_number",
+            "age",
+            "address",
+            "date_admitted",
+            "last_updated",
+        ]
+
 
 
 class DispenseForm(ModelForm):
-    # gender_list = (
-       
-    # )
-    # drug_id = forms.ChoiceField(label="Gender", choices=gender_list, widget=forms.Select(attrs={"class":"form-control"}))
-   
     class Meta:
-        model=Dispense
-        fields='__all__'
-        exclude=['stock_ref_no']
-        
-    #     drug_id = forms.CharField(label="Last Name", max_length=50, widget=forms.TextInput(attrs={"class":"form-control"}))
-    # # def updateItem(self,request):
- 
-    #     data=json.loads(request.body)
-    #     drugId=data['drugId']
-    #     print('ACTION:',drugId)
-    #     drug_name = forms.CharField(label="Mobile", max_length=50, widget=forms.TextInput(attrs={"value":drugId}))
+        model = Dispense
+        fields = [
+            "patient_id",
+            "drug_id",
+            "drug_name",
+            "dispense_quantity",
+            "dispense_date",
+            "pharmacist",
+            "comments",
+        ]
 
-    # # # stock=Stock.objects.get(id=drugId)
-    # # # # drugs=Stock.objects.all()
-    # # # form=DispenseForm(request.POST or None,instance=stock,initial={'patient_id':queryset} )
-    # # # if form.is_valid():
-    # # #     instance=form.save(commit=False)
-    # # #     instance.quantity-=instance.dispense_quantity
-        
-    # #     # instance.save()
-    #     return JsonResponse('jamara dd',  safe=False)
- 
+
 class ReceiveStockForm(ModelForm):
-    valid_to= forms.DateField(label="Expiry Date", widget=DateInput(attrs={"class":"form-control"}))
+    valid_to = forms.DateField(label="Expiry Date", widget=DateInput(attrs={"class": "form-control"}))
 
     class Meta:
-        model=Stock
-        fields='__all__'
-        exclude=['category' ,'drug_name','valid_from','dispense_quantity','reorder_level','date_from','date_to','quantity','manufacture']
+        model = Stock
+        fields = [
+            "supplier",
+            "batch_no",
+            "cost_per_unit",
+            "total_cost",
+            "unit_price",
+            "received_date",
+            "valid_to",
+        ]
+
 
 
 class ReorderLevelForm(forms.ModelForm):
