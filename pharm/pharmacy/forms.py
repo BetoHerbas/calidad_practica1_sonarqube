@@ -41,12 +41,14 @@ class PatientForm(forms.Form):
     )
     gender = forms.ChoiceField(label="Gender", choices=gender_list, widget=forms.Select(attrs={"class":"form-control"}))
     dob= forms.DateField(label="dob", widget=DateInput(attrs={"class":"form-control"}))
+    
+    FIELD_REQUIRED_MSG = "This field is required"
 
     # Validations for patient
     def clean_reg_no(self):
         reg_no = self.cleaned_data['reg_no']
         if  not  reg_no:
-            raise ValidationError("This field is required")
+            raise ValidationError(self.FIELD_REQUIRED_MSG)
         for instance in Patients.objects.all():
             if instance.reg_no==reg_no:
                 raise ValidationError( "Registration number aready exist")
@@ -71,7 +73,7 @@ class PatientForm(forms.Form):
     def clean_username(self):
         username = self.cleaned_data['username']
         if  not  username:
-            raise ValidationError("This field is required")
+            raise ValidationError(self.FIELD_REQUIRED_MSG)
         for instance in CustomUser.objects.all():
             if instance.username==username:
                 raise ValidationError( "Username aready exist")
@@ -81,13 +83,13 @@ class PatientForm(forms.Form):
     def clean_firstName(self):
         first_name = self.cleaned_data['first_name']
         if  not  first_name:
-            raise ValidationError("This field is required")
+            raise ValidationError(self.FIELD_REQUIRED_MSG)
         return first_name
 
     def clean_secondName(self):
         last_name = self.cleaned_data['last_name']
         if  not  last_name:
-            raise ValidationError("This field is required")
+            raise ValidationError(self.FIELD_REQUIRED_MSG)
         return last_name
 
 class EditPatientForm(forms.Form):
@@ -145,18 +147,18 @@ class DoctorForm(ModelForm):
         def clean_firstName(self):
             first_name = self.cleaned_data['first_name']
             if  not  first_name:
-                raise ValidationError("This field is required")
+                raise ValidationError(self.FIELD_REQUIRED_MSG)
             return first_name
 
         def clean_mobile(self):
             mobile=self.cleaned_data.get('mobile')
             if not mobile:
-                raise forms.ValidationError('This field is requied')
+                raise forms.ValidationError(self.FIELD_REQUIRED_MSG)
             return mobile
         def clean_username(self):
             username = self.cleaned_data['username']
             if  not  username:
-                raise ValidationError("This field is required")
+                raise ValidationError(self.FIELD_REQUIRED_MSG)
             for instance in CustomUser.objects.all():
                 if instance.username==username:
                     raise ValidationError( "Username aready exist")
