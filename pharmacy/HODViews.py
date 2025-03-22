@@ -138,7 +138,7 @@ def confirm_delete(request,pk):
 
 
 
-
+STAFF_ADDED_SUCCESS_MESSAGE = "Staff Added Successfully!"
     
 @login_required
 def create_pharmacist(request):
@@ -159,9 +159,8 @@ def create_pharmacist(request):
         user.last_name=last_name
         user.pharmacist.address = address
         user.pharmacist.mobile = mobile
-
         user.save()
-        messages.success(request, "Staff Added Successfully!")
+        messages.success(request, STAFF_ADDED_SUCCESS_MESSAGE)
         return redirect('add_pharmacist')
        
 
@@ -200,7 +199,7 @@ def create_doctor(request):
             user.doctor.mobile = mobile
 
             user.save()
-            messages.success(request, "Staff Added Successfully!")
+            messages.success(request, STAFF_ADDED_SUCCESS_MESSAGE)
             return redirect('add_doctor')
         except Exception:
             messages.error(request, "Failed to Add Staff!")
@@ -244,7 +243,7 @@ def create_pharmacy_clerk(request):
 
 
             user.save()
-            messages.success(request, "Staff Added Successfully!")
+            messages.success(request, STAFF_ADDED_SUCCESS_MESSAGE)
             return redirect('add_pharmacyClerk')
         except Exception:
             messages.error(request, "Failed to Add Staff!")
