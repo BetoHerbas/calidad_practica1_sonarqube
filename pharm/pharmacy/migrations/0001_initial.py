@@ -8,11 +8,12 @@ import django.db.models.deletion
 import django.utils.timezone
 
 PHARMACY_PATIENTS = 'pharmacy.patients'
+IMAGE2_CONS = 'images2.png'
 
 class Migration(migrations.Migration):
 
     initial = True
-
+    
     dependencies = [
         ('auth', '0012_alter_user_first_name_max_length'),
     ]
@@ -103,7 +104,7 @@ class Migration(migrations.Migration):
                 ('valid_from', models.DateTimeField(blank=True, default=django.utils.timezone.now, null=True)),
                 ('valid_to', models.DateTimeField(null=True)),
                 ('drug_description', models.TextField(blank=True, max_length=1000, null=True)),
-                ('drug_pic', models.ImageField(blank=True, default='images2.png', null=True, upload_to='')),
+                ('drug_pic', models.ImageField(blank=True, default=IMAGE2_CONS, null=True, upload_to='')),
                 ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='pharmacy.category')),
             ],
         ),
@@ -125,7 +126,7 @@ class Migration(migrations.Migration):
                 ('gender', models.CharField(choices=[('Male', 'Male'), ('Female', 'Female')], max_length=100, null=True)),
                 ('mobile', models.CharField(blank=True, max_length=10, null=True)),
                 ('address', models.CharField(blank=True, max_length=300, null=True)),
-                ('profile_pic', models.ImageField(blank=True, default='images2.png', null=True, upload_to='')),
+                ('profile_pic', models.ImageField(blank=True, default=IMAGE2_CONS, null=True, upload_to='')),
                 ('age', models.IntegerField(blank=True, default='0', null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
@@ -141,7 +142,7 @@ class Migration(migrations.Migration):
                 ('gender', models.CharField(choices=[('Male', 'Male'), ('Female', 'Female')], max_length=100, null=True)),
                 ('mobile', models.CharField(blank=True, max_length=10, null=True)),
                 ('address', models.CharField(blank=True, max_length=300, null=True)),
-                ('profile_pic', models.ImageField(blank=True, default='images2.png', null=True, upload_to='')),
+                ('profile_pic', models.ImageField(blank=True, default=IMAGE2_CONS, null=True, upload_to='')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('admin', models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
