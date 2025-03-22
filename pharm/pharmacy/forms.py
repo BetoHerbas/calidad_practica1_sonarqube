@@ -41,7 +41,7 @@ class PatientForm(forms.Form):
     )
     gender = forms.ChoiceField(label="Gender", choices=gender_list, widget=forms.Select(attrs={"class":"form-control"}))
     dob= forms.DateField(label="dob", widget=DateInput(attrs={"class":"form-control"}))
-    
+
     FIELD_REQUIRED_MSG = "This field is required"
 
     # Validations for patient
@@ -115,8 +115,11 @@ class StockForm(forms.ModelForm):
 
     class Meta:
         model=Stock
-        fields='__all__'
-        exclude=['valid_from','reorder_level','receive_quantity', 'prescrip_drug_acess']
+        fields = [
+            'category', 'drug_imprint', 'drug_name', 'drug_color', 'drug_shape',
+            'quantity', 'manufacture', 'drug_strength', 'valid_to',
+            'drug_description', 'drug_pic'
+        ]
 
 class CategoryForm(forms.ModelForm):
     class Meta:
