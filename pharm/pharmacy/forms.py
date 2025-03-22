@@ -12,9 +12,9 @@ from django.core.validators import RegexValidator
 import json
 class PatientPicForm1(forms.ModelForm):
     class Meta:
-        model=Patients
-        fields='__all__'
-        exclude=['admin','gender','mobile','address','dob']
+        model = Patients
+        fields = ['first_name', 'last_name', 'profile_pic', 'age', 'address', 'date_admitted', 'last_updated']  
+
       
 
 
