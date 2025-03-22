@@ -1,6 +1,6 @@
-projectKey=primerPractica
+projectKey=pharmacy123
 serverUrl=http://localhost:9000
 serverVersion=25.3.0.104237
-dashboardUrl=http://localhost:9000/dashboard?id=primerPractica
-ceTaskId=13569726-250f-426d-acde-1ff41654a85d
-ceTaskUrl=http://localhost:9000/api/ce/task?id=13569726-250f-426d-acde-1ff41654a85d
+dashboardUrl=http://localhost:9000/dashboard?id=pharmacy123
+ceTaskId=e7b3bde0-d41e-40fe-ba3b-f96d6d1b8666
+ceTaskUrl=http://localhost:9000/api/ce/task?id=e7b3bde0-d41e-40fe-ba3b-f96d6d1b8666

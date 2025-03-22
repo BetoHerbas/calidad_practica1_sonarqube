@@ -59,6 +59,7 @@ class AdminHOD(models.Model):
         return str(self.admin)
     
 
+IMAGE2_CONS = 'images2.png'
 
 class Pharmacist(models.Model):
     gender_category=(
@@ -71,7 +72,7 @@ class Pharmacist(models.Model):
     gender=models.CharField(max_length=100,null=True,choices=gender_category)
     mobile =models.CharField(max_length=10,null=True,blank=True)
     address=models.CharField(max_length=300,null=True,blank=True)
-    profile_pic=models.ImageField(default="images2.png",null=True,blank=True)
+    profile_pic=models.ImageField(default=IMAGE2_CONS,null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = models.Manager()
@@ -108,7 +109,7 @@ class PharmacyClerk(models.Model):
     gender=models.CharField(max_length=100,null=True,choices=gender_category)
     mobile=models.CharField(max_length=10,null=True,blank=True)
     address=models.CharField(max_length=300,null=True,blank=True)
-    profile_pic=models.ImageField(default="images2.png",null=True,blank=True)
+    profile_pic=models.ImageField(default=IMAGE2_CONS,null=True,blank=True)
     age= models.IntegerField(default='0', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -158,7 +159,7 @@ class Stock(models.Model):
     valid_from = models.DateTimeField(blank=True, null=True,default=timezone.now)
     valid_to = models.DateTimeField(blank=False, null=True)
     drug_description=models.TextField(blank=True,max_length=1000,null=True)
-    drug_pic=models.ImageField(default="images2.png",null=True,blank=True)
+    drug_pic=models.ImageField(default=IMAGE2_CONS,null=True,blank=True)
     objects = ExpiredManager()
    
     def __str__(self):
