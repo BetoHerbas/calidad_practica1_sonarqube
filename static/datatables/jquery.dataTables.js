@@ -2625,7 +2625,7 @@ function applyStringTarget(columns, target, fn, def) {
 			};
 		}
 		else if ( typeof mSource === 'string' && (mSource.indexOf('.') !== -1 ||
-			      mSource.indexOf('[') !== -1 || mSource.indexOf('(') !== -1) )
+			    mSource.indexOf('[') !== -1 || mSource.indexOf('(') !== -1) )
 		{
 			/* If there is a . in the source string then the data source is in a
 			 * nested object so we loop over the data for each level to get the next
@@ -2633,71 +2633,72 @@ function applyStringTarget(columns, target, fn, def) {
 			 * return. This allows entire objects to be missing and sDefaultContent to
 			 * be used if defined, rather than throwing an error
 			 */
-			let fetchData = function (data, type, src) {
-				let arrayNotation, funcNotation, out, innerSrc;
-	
-				if ( src !== "" )
-				{
-					let a = _fnSplitObjNotation( src );
-	
-					for ( let i=0, iLen=a.length ; i<iLen ; i++ )
-					{
-						// Check if we are dealing with special notation
-						arrayNotation = a[i].match(__reArray);
-						funcNotation = a[i].match(__reFn);
-	
-						if ( arrayNotation )
-						{
-							// Array notation
-							a[i] = a[i].replace(__reArray, '');
-	
-							// Condition allows simply [] to be passed in
-							if ( a[i] !== "" ) {
-								data = data[ a[i] ];
-							}
-							out = [];
-	
-							// Get the remainder of the nested object to get
-							a.splice( 0, i+1 );
-							innerSrc = a.join('.');
-	
-							// Traverse each entry in the array getting the properties requested
-							if ( Array.isArray( data ) ) {
-								for ( let j=0, jLen=data.length ; j<jLen ; j++ ) {
-									out.push( fetchData( data[j], type, innerSrc ) );
-								}
-							}
-	
-							// If a string is given in between the array notation indicators, that
-							// is used to join the strings together, otherwise an array is returned
-							let join = arrayNotation[0].substring(1, arrayNotation[0].length-1);
-							data = (join==="") ? out : out.join(join);
-	
-							// The inner call to fetchData has already traversed through the remainder
-							// of the source requested, so we exit from the loop
-							break;
-						}
-						else if ( funcNotation )
-						{
-							// Function call
-							a[i] = a[i].replace(__reFn, '');
-							data = data[ a[i] ]();
-							continue;
-						}
-	
-						if ( data === null || data[ a[i] ] === undefined )
-						{
-							return undefined;
-						}
-						data = data[ a[i] ];
+			/*REFACTORIZACION DE FUNCION*/ 
+			function _handleArrayNotation(data, arrayNotation, a, i, type) {
+				a[i] = a[i].replace(__reArray, '');
+			
+				// Condition allows simply [] to be passed in
+				if (a[i] !== "") {
+					data = data[a[i]];
+				}
+			
+				let out = [];
+				let innerSrc = a.slice(i + 1).join('.');
+			
+				// Traverse each entry in the array getting the properties requested
+				if (Array.isArray(data)) {
+					for (let j = 0, jLen = data.length; j < jLen; j++) {
+						out.push(fetchData(data[j], type, innerSrc));
 					}
 				}
-	
+			
+				// Always return an array
+				return out;
+			}
+			
+			function _handleFunctionNotation(data, funcNotation, a, i) {
+				a[i] = a[i].replace(__reFn, '');
+				return data[a[i]]();
+			}
+			
+			function fetchData(data, type, src) {
+				if (src === "") {
+					return data;
+				}
+			
+				let a = _fnSplitObjNotation(src);
+			
+				for (let i = 0, iLen = a.length; i < iLen; i++) {
+					let arrayNotation = a[i].match(__reArray);
+					let funcNotation = a[i].match(__reFn);
+			
+					if (arrayNotation) {
+						data = _handleArrayNotation(data, arrayNotation, a, i, type);
+			
+						// If a string is given in between the array notation indicators, join the array
+						let join = arrayNotation[0].substring(1, arrayNotation[0].length - 1);
+						if (join !== "") {
+							data = data.join(join);
+						}
+			
+						break; // Exit loop after handling array notation
+					} else if (funcNotation) {
+						data = _handleFunctionNotation(data, funcNotation, a, i);
+						continue;
+					}
+			
+					if (data === null || data[a[i]] === undefined) {
+						return undefined;
+					}
+			
+					data = data[a[i]];
+				}
+			
 				return data;
-			};
-	
+			}
+			
 			return function (data, type) { // row and meta also passed, but not used
-				return fetchData( data, type, mSource );
+				return fetchData(data, type, mSource);
 			};
 		}
 		else
