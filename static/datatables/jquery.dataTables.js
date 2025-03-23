@@ -2741,89 +2741,82 @@ function applyStringTarget(columns, target, fn, def) {
 			};
 		}
 		else if ( typeof mSource === 'string' && (mSource.indexOf('.') !== -1 ||
-			      mSource.indexOf('[') !== -1 || mSource.indexOf('(') !== -1) )
+			    mSource.indexOf('[') !== -1 || mSource.indexOf('(') !== -1) )
 		{
 			/* Like the get, we need to get data from a nested object */
-			let setData = function (data, val, src) {
-				let a = _fnSplitObjNotation( src ), b;
-				let aLast = a[a.length-1];
-				let arrayNotation, funcNotation, o, innerSrc;
-	
-				for ( let i=0, iLen=a.length-1 ; i<iLen ; i++ )
-				{
+			/*REFACTORIZACION DE FUNCION */
+
+			function _handleArrayNotation(data, a, i, val) {
+				a[i] = a[i].replace(__reArray, '');
+				data[a[i]] = [];
+			
+				// Get the remainder of the nested object to set so we can recurse
+				let b = a.slice();
+				b.splice(0, i + 1);
+				let innerSrc = b.join('.');
+			
+				// Traverse each entry in the array setting the properties requested
+				if (Array.isArray(val)) {
+					for (let j = 0, jLen = val.length; j < jLen; j++) {
+						let o = {};
+						setData(o, val[j], innerSrc);
+						data[a[i]].push(o);
+					}
+				} else {
+					// We've been asked to save data to an array, but it
+					// isn't array data to be saved. Best that can be done
+					// is to just save the value.
+					data[a[i]] = val;
+				}
+			}
+			
+			function _handleFunctionNotation(data, a, i, val) {
+				a[i] = a[i].replace(__reFn, '');
+				return data[a[i]](val);
+			}
+			
+			function setData(data, val, src) {
+				let a = _fnSplitObjNotation(src);
+				let aLast = a[a.length - 1];
+			
+				for (let i = 0, iLen = a.length - 1; i < iLen; i++) {
 					// Protect against prototype pollution
 					if (a[i] === '__proto__' || a[i] === 'constructor') {
 						throw new Error('Cannot set prototype values');
 					}
-	
-					// Check if we are dealing with an array notation request
-					arrayNotation = a[i].match(__reArray);
-					funcNotation = a[i].match(__reFn);
-	
-					if ( arrayNotation )
-					{
-						a[i] = a[i].replace(__reArray, '');
-						data[ a[i] ] = [];
-	
-						// Get the remainder of the nested object to set so we can recurse
-						b = a.slice();
-						b.splice( 0, i+1 );
-						innerSrc = b.join('.');
-	
-						// Traverse each entry in the array setting the properties requested
-						if ( Array.isArray( val ) )
-						{
-							for ( let j=0, jLen=val.length ; j<jLen ; j++ )
-							{
-								o = {};
-								setData( o, val[j], innerSrc );
-								data[ a[i] ].push( o );
-							}
-						}
-						else
-						{
-							// We've been asked to save data to an array, but it
-							// isn't array data to be saved. Best that can be done
-							// is to just save the value.
-							data[ a[i] ] = val;
-						}
-	
-						// The inner call to setData has already traversed through the remainder
-						// of the source and has set the data, thus we can exit here
-						return;
+			
+					// Check if we are dealing with an array or function notation
+					let arrayNotation = a[i].match(__reArray);
+					let funcNotation = a[i].match(__reFn);
+			
+					if (arrayNotation) {
+						_handleArrayNotation(data, a, i, val);
+						return; // Exit after handling array notation
+					} else if (funcNotation) {
+						data = _handleFunctionNotation(data, a, i, val);
+						continue;
 					}
-					else if ( funcNotation )
-					{
-						// Function call
-						a[i] = a[i].replace(__reFn, '');
-						data = data[ a[i] ]( val );
+			
+					// If the nested object doesn't currently exist, create it
+					if (data[a[i]] === null || data[a[i]] === undefined) {
+						data[a[i]] = {};
 					}
-	
-					// If the nested object doesn't currently exist - since we are
-					// trying to set the value - create it
-					if ( data[ a[i] ] === null || data[ a[i] ] === undefined )
-					{
-						data[ a[i] ] = {};
-					}
-					data = data[ a[i] ];
+					data = data[a[i]];
 				}
-	
+			
 				// Last item in the input - i.e, the actual set
-				if ( aLast.match(__reFn ) )
-				{
+				if (aLast.match(__reFn)) {
 					// Function call
-					data = data[ aLast.replace(__reFn, '') ]( val );
-				}
-				else
-				{
+					data = _handleFunctionNotation(data, a, a.length - 1, val);
+				} else {
 					// If array notation is used, we just want to strip it and use the property name
 					// and assign the value. If it isn't used, then we get the result we want anyway
-					data[ aLast.replace(__reArray, '') ] = val;
+					data[aLast.replace(__reArray, '')] = val;
 				}
-			};
-	
+			}
+			
 			return function (data, val) { // meta is also passed in, but not used
-				return setData( data, val, mSource );
+				return setData(data, val, mSource);
 			};
 		}
 		else
