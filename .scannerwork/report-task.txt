@@ -1,4 +1,4 @@
-projectKey=pharmacy123
+projectKey=primerPractica
 serverUrl=http://localhost:9000
 serverVersion=25.3.0.104237
 dashboardUrl=http://localhost:9000/dashboard?id=pharmacy123

@@ -7,6 +7,8 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 
+PATIENTS_MODEL = 'pharmacy.patients'
+DEFAULT_IMAGE = 'images2.png'
 
 class Migration(migrations.Migration):
 
@@ -102,10 +104,11 @@ class Migration(migrations.Migration):
                 ('valid_from', models.DateTimeField(blank=True, default=django.utils.timezone.now, null=True)),
                 ('valid_to', models.DateTimeField(null=True)),
                 ('drug_description', models.TextField(blank=True, max_length=1000, null=True)),
-                ('drug_pic', models.ImageField(blank=True, default='images2.png', null=True, upload_to='')),
+                ('drug_pic', models.ImageField(blank=True, default=DEFAULT_IMAGE , null=True, upload_to='')),
                 ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='pharmacy.category')),
             ],
         ),
+        
         migrations.CreateModel(
             name='Prescription',
             fields=[
@@ -113,7 +116,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(null=True)),
                 ('prescribe', models.CharField(max_length=100, null=True)),
                 ('date_precribed', models.DateTimeField(auto_now_add=True)),
-                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='pharmacy.patients')),
+                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=PATIENTS_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -124,7 +127,7 @@ class Migration(migrations.Migration):
                 ('gender', models.CharField(choices=[('Male', 'Male'), ('Female', 'Female')], max_length=100, null=True)),
                 ('mobile', models.CharField(blank=True, max_length=10, null=True)),
                 ('address', models.CharField(blank=True, max_length=300, null=True)),
-                ('profile_pic', models.ImageField(blank=True, default='images2.png', null=True, upload_to='')),
+                ('profile_pic', models.ImageField(blank=True, default=DEFAULT_IMAGE , null=True, upload_to='')),
                 ('age', models.IntegerField(blank=True, default='0', null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
@@ -140,7 +143,7 @@ class Migration(migrations.Migration):
                 ('gender', models.CharField(choices=[('Male', 'Male'), ('Female', 'Female')], max_length=100, null=True)),
                 ('mobile', models.CharField(blank=True, max_length=10, null=True)),
                 ('address', models.CharField(blank=True, max_length=300, null=True)),
-                ('profile_pic', models.ImageField(blank=True, default='images2.png', null=True, upload_to='')),
+                ('profile_pic', models.ImageField(blank=True, default=DEFAULT_IMAGE , null=True, upload_to='')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('admin', models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
@@ -156,7 +159,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('admin_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='pharmacy.adminhod')),
-                ('patient_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='pharmacy.patients')),
+                ('patient_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=PATIENTS_MODEL)),
                 ('pharmacist_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='pharmacy.pharmacist')),
             ],
         ),
@@ -185,7 +188,7 @@ class Migration(migrations.Migration):
                 ('instructions', models.TextField(max_length=300, null=True)),
                 ('dispense_at', models.DateTimeField(auto_now_add=True, null=True)),
                 ('drug_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='pharmacy.stock')),
-                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='pharmacy.patients')),
+                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=PATIENTS_MODEL)),
             ],
         ),
     ]
