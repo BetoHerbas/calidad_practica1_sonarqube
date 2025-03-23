@@ -2,5 +2,5 @@ projectKey=primerPractica
 serverUrl=http://localhost:9000
 serverVersion=25.3.0.104237
 dashboardUrl=http://localhost:9000/dashboard?id=primerPractica
-ceTaskId=520f37a5-edc0-482e-826b-b351b18f8e83
-ceTaskUrl=http://localhost:9000/api/ce/task?id=520f37a5-edc0-482e-826b-b351b18f8e83
+ceTaskId=2755973b-60c8-4ffc-8444-6af0e7f446c4
+ceTaskUrl=http://localhost:9000/api/ce/task?id=2755973b-60c8-4ffc-8444-6af0e7f446c4
