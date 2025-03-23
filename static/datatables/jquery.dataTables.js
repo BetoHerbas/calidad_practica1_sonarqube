@@ -2901,66 +2901,65 @@ function applyStringTarget(columns, target, fn, def) {
 	 *   the sort and filter methods can subscribe to it. That will required
 	 *   initialisation options for sorting, which is why it is not already baked in
 	 */
-	function _fnInvalidate( settings, rowIdx, src, colIdx )
-	{
-		let row = settings.aoData[ rowIdx ];
-		let i, ien;
-		let cellWrite = function ( cell, col ) {
-			// This is very frustrating, but in IE if you just write directly
-			// to innerHTML, and elements that are overwritten are GC'ed,
-			// even if there is a reference to them elsewhere
-			while ( cell.childNodes.length ) {
-				cell.removeChild( cell.firstChild );
+
+	/* REFACTORIZACION DE FUNCION */
+	function _fnInvalidate(settings, rowIdx, src, colIdx) {
+		let row = settings.aoData[rowIdx];
+	
+		// Función para escribir en una celda
+		function cellWrite(cell, col) {
+			while (cell.childNodes.length) {
+				cell.removeChild(cell.firstChild);
 			}
-	
-			cell.innerHTML = _fnGetCellData( settings, rowIdx, col, 'display' );
-		};
-	
-		// Are we reading last data from DOM or the data object?
-		if ( src === 'dom' || ((! src || src === 'auto') && row.src === 'dom') ) {
-			// Read the data from the DOM
-			row._aData = _fnGetRowElements(
-					settings, row, colIdx, colIdx === undefined ? undefined : row._aData
-				)
-				.data;
+			cell.innerHTML = _fnGetCellData(settings, rowIdx, col, 'display');
 		}
-		else {
-			// Reading from data object, update the DOM
-			let cells = row.anCells;
 	
-			if ( cells ) {
-				if ( colIdx !== undefined ) {
-					cellWrite( cells[colIdx], colIdx );
+		// Función para invalidar tipos de columna
+		function invalidateColumnTypes(cols, colIdx) {
+			if (colIdx !== undefined) {
+				cols[colIdx].sType = null;
+			} else {
+				for (let i = 0, ien = cols.length; i < ien; i++) {
+					cols[i].sType = null;
 				}
-				else {
-					for ( i=0, ien=cells.length ; i<ien ; i++ ) {
-						cellWrite( cells[i], i );
+			}
+		}
+	
+		// Función para determinar si se debe leer desde el DOM
+		function shouldReadFromDOM(src, rowSrc) {
+			return src === 'dom' || ((!src || src === 'auto') && rowSrc === 'dom');
+		}
+	
+		// Lógica principal de invalidación
+		if (shouldReadFromDOM(src, row.src)) {
+			// Leer datos desde el DOM
+			row._aData = _fnGetRowElements(settings, row, colIdx, colIdx === undefined ? undefined : row._aData).data;
+		} else {
+			// Leer desde el objeto de datos y actualizar el DOM
+			let cells = row.anCells;
+			if (cells) {
+				if (colIdx !== undefined) {
+					cellWrite(cells[colIdx], colIdx);
+				} else {
+					for (let i = 0, ien = cells.length; i < ien; i++) {
+						cellWrite(cells[i], i);
 					}
 				}
 			}
 		}
 	
-		// For both row and cell invalidation, the cached data for sorting and
-		// filtering is nulled out
+		// Invalidar datos de ordenamiento y filtrado
 		row._aSortData = null;
 		row._aFilterData = null;
 	
-		// Invalidate the type for a specific column (if given) or all columns since
-		// the data might have changed
-		let cols = settings.aoColumns;
-		if ( colIdx !== undefined ) {
-			cols[ colIdx ].sType = null;
-		}
-		else {
-			for ( i=0, ien=cols.length ; i<ien ; i++ ) {
-				cols[i].sType = null;
-			}
+		// Invalidar tipos de columna
+		invalidateColumnTypes(settings.aoColumns, colIdx);
 	
-			// Update DataTables special `DT_*` attributes for the row
-			_fnRowAttributes( settings, row );
+		// Actualizar atributos especiales `DT_*` de la fila si se invalidan todas las columnas
+		if (colIdx === undefined) {
+			_fnRowAttributes(settings, row);
 		}
 	}
-	
 	
 	/**
 	 * Build a data source object from an HTML row, reading the contents of the
