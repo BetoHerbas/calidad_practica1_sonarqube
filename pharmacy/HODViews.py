@@ -16,6 +16,7 @@ from django.utils.timezone import datetime
 from .forms import PatientForm, PatientSearchForm1, StockForm, CategoryForm, PrescriptionForm, StockForm, ReceiveStockForm, ReorderLevelForm, EditPatientForm, HodForm
 from .models import Patients, CustomUser, Pharmacist, Stock, Prescription, Doctor, PharmacyClerk, AdminHOD
 
+TEMPLATE_SURE_DELETE = 'hod_templates/sure_delete.html'
 
 def admin_dashboard(request):
     patients_total=Patients.objects.all().count()
