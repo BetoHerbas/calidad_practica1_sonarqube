@@ -2276,15 +2276,16 @@
 	/** REFACTORIZACION DE CODIGO*/
 	function _fnColumnTypes(settings) {
 		const columns = settings.aoColumns;
+		const data = settings.aoData;
 		const types = DataTable.ext.type.detect;
 	
 		for (let i = 0, ien = columns.length; i < ien; i++) {
 			const col = columns[i];
-			_detectColumnType(col, settings, types);
+			detectColumnType(col, data, types, settings);
 		}
 	}
 	
-	function _detectColumnType(col, settings, types) {
+	function detectColumnType(col, data, types, settings) {
 		if (col.sType) {
 			return; // El tipo ya está definido
 		}
@@ -2294,12 +2295,11 @@
 			return;
 		}
 	
-		const detectedType = _findColumnType(col, settings, types);
+		const detectedType = detectTypeFromData(col, data, types, settings);
 		col.sType = detectedType || 'string'; // Fallback a 'string' si no se detecta ningún tipo
 	}
 	
-	function _findColumnType(col, settings, types) {
-		const data = settings.aoData;
+	function detectTypeFromData(col, data, types, settings) {
 		const cache = [];
 	
 		for (let j = 0, jen = types.length; j < jen; j++) {
@@ -2634,67 +2634,59 @@ function applyStringTarget(columns, target, fn, def) {
 			 * be used if defined, rather than throwing an error
 			 */
 			/*REFACTORIZACION DE FUNCION*/ 
-			function _handleArrayNotation(data, arrayNotation, a, i, type) {
-				a[i] = a[i].replace(__reArray, '');
-			
-				// Condition allows simply [] to be passed in
-				if (a[i] !== "") {
-					data = data[a[i]];
+
+			function fetchData(data, type, src) {
+				if (src === "") {
+					return data;
 				}
 			
-				let out = [];
-				let innerSrc = a.slice(i + 1).join('.');
+				const parts = _fnSplitObjNotation(src);
 			
-				// Traverse each entry in the array getting the properties requested
+				for (let i = 0, iLen = parts.length; i < iLen; i++) {
+					const part = parts[i];
+					const arrayNotation = part.match(__reArray);
+					const funcNotation = part.match(__reFn);
+			
+					if (arrayNotation) {
+						data = handleArrayNotation(data, parts, i, type, arrayNotation);
+						break; // Exit after handling array notation
+					} else if (funcNotation) {
+						data = handleFunctionNotation(data, part, funcNotation);
+						continue;
+					}
+			
+					if (data === null || data[part] === undefined) {
+						return undefined;
+					}
+					data = data[part];
+				}
+			
+				return data;
+			}
+			
+			function handleArrayNotation(data, parts, index, type, arrayNotation) {
+				const property = parts[index].replace(__reArray, '');
+			
+				if (property !== "") {
+					data = data[property];
+				}
+			
+				const out = [];
+				const innerSrc = parts.slice(index + 1).join('.');
+			
 				if (Array.isArray(data)) {
 					for (let j = 0, jLen = data.length; j < jLen; j++) {
 						out.push(fetchData(data[j], type, innerSrc));
 					}
 				}
 			
-				// Always return an array
-				return out;
+				const join = arrayNotation[0].substring(1, arrayNotation[0].length - 1);
+				return join === "" ? out : out.join(join);
 			}
 			
-			function _handleFunctionNotation(data, funcNotation, a, i) {
-				a[i] = a[i].replace(__reFn, '');
-				return data[a[i]]();
-			}
-			
-			function fetchData(data, type, src) {
-				if (src === "") {
-					return data;
-				}
-			
-				let a = _fnSplitObjNotation(src);
-			
-				for (let i = 0, iLen = a.length; i < iLen; i++) {
-					let arrayNotation = a[i].match(__reArray);
-					let funcNotation = a[i].match(__reFn);
-			
-					if (arrayNotation) {
-						data = _handleArrayNotation(data, arrayNotation, a, i, type);
-			
-						// If a string is given in between the array notation indicators, join the array
-						let join = arrayNotation[0].substring(1, arrayNotation[0].length - 1);
-						if (join !== "") {
-							data = data.join(join);
-						}
-			
-						break; // Exit loop after handling array notation
-					} else if (funcNotation) {
-						data = _handleFunctionNotation(data, funcNotation, a, i);
-						continue;
-					}
-			
-					if (data === null || data[a[i]] === undefined) {
-						return undefined;
-					}
-			
-					data = data[a[i]];
-				}
-			
-				return data;
+			function handleFunctionNotation(data, part, funcNotation) {
+				const property = part.replace(__reFn, '');
+				return data[property]();
 			}
 			
 			return function (data, type) { // row and meta also passed, but not used
@@ -2746,72 +2738,71 @@ function applyStringTarget(columns, target, fn, def) {
 			/* Like the get, we need to get data from a nested object */
 			/*REFACTORIZACION DE FUNCION */
 
-			function _handleArrayNotation(data, a, i, val) {
-				a[i] = a[i].replace(__reArray, '');
-				data[a[i]] = [];
-			
-				// Get the remainder of the nested object to set so we can recurse
-				let b = a.slice();
-				b.splice(0, i + 1);
-				let innerSrc = b.join('.');
-			
-				// Traverse each entry in the array setting the properties requested
-				if (Array.isArray(val)) {
-					for (let j = 0, jLen = val.length; j < jLen; j++) {
-						let o = {};
-						setData(o, val[j], innerSrc);
-						data[a[i]].push(o);
-					}
-				} else {
-					// We've been asked to save data to an array, but it
-					// isn't array data to be saved. Best that can be done
-					// is to just save the value.
-					data[a[i]] = val;
-				}
-			}
-			
-			function _handleFunctionNotation(data, a, i, val) {
-				a[i] = a[i].replace(__reFn, '');
-				return data[a[i]](val);
-			}
-			
 			function setData(data, val, src) {
-				let a = _fnSplitObjNotation(src);
-				let aLast = a[a.length - 1];
+				const parts = _fnSplitObjNotation(src);
+				const lastPart = parts[parts.length - 1];
 			
-				for (let i = 0, iLen = a.length - 1; i < iLen; i++) {
-					// Protect against prototype pollution
-					if (a[i] === '__proto__' || a[i] === 'constructor') {
-						throw new Error('Cannot set prototype values');
-					}
+				for (let i = 0, iLen = parts.length - 1; i < iLen; i++) {
+					const part = parts[i];
+					protectFromPrototypePollution(part);
 			
-					// Check if we are dealing with an array or function notation
-					let arrayNotation = a[i].match(__reArray);
-					let funcNotation = a[i].match(__reFn);
+					const arrayNotation = part.match(__reArray);
+					const funcNotation = part.match(__reFn);
 			
 					if (arrayNotation) {
-						_handleArrayNotation(data, a, i, val);
+						handleArrayNotation(data, parts, i, val);
 						return; // Exit after handling array notation
 					} else if (funcNotation) {
-						data = _handleFunctionNotation(data, a, i, val);
+						data = handleFunctionNotation(data, part, funcNotation, val);
 						continue;
 					}
 			
-					// If the nested object doesn't currently exist, create it
-					if (data[a[i]] === null || data[a[i]] === undefined) {
-						data[a[i]] = {};
-					}
-					data = data[a[i]];
+					ensureNestedObjectExists(data, part);
+					data = data[part];
 				}
 			
-				// Last item in the input - i.e, the actual set
-				if (aLast.match(__reFn)) {
-					// Function call
-					data = _handleFunctionNotation(data, a, a.length - 1, val);
+				handleLastPart(data, lastPart, val);
+			}
+			
+			function protectFromPrototypePollution(part) {
+				if (part === '__proto__' || part === 'constructor') {
+					throw new Error('Cannot set prototype values');
+				}
+			}
+			
+			function handleArrayNotation(data, parts, index, val) {
+				const property = parts[index].replace(__reArray, '');
+				data[property] = [];
+			
+				const innerSrc = parts.slice(index + 1).join('.');
+			
+				if (Array.isArray(val)) {
+					for (let j = 0, jLen = val.length; j < jLen; j++) {
+						const nestedObject = {};
+						setData(nestedObject, val[j], innerSrc);
+						data[property].push(nestedObject);
+					}
 				} else {
-					// If array notation is used, we just want to strip it and use the property name
-					// and assign the value. If it isn't used, then we get the result we want anyway
-					data[aLast.replace(__reArray, '')] = val;
+					data[property] = val;
+				}
+			}
+			
+			function handleFunctionNotation(data, part, funcNotation, val) {
+				const property = part.replace(__reFn, '');
+				return data[property](val);
+			}
+			
+			function ensureNestedObjectExists(data, part) {
+				if (data[part] === null || data[part] === undefined) {
+					data[part] = {};
+				}
+			}
+			
+			function handleLastPart(data, lastPart, val) {
+				if (lastPart.match(__reFn)) {
+					data = handleFunctionNotation(data, lastPart, lastPart.match(__reFn), val);
+				} else {
+					data[lastPart.replace(__reArray, '')] = val;
 				}
 			}
 			
@@ -2904,7 +2895,7 @@ function applyStringTarget(columns, target, fn, def) {
 
 	/* REFACTORIZACION DE FUNCION */
 	function _fnInvalidate(settings, rowIdx, src, colIdx) {
-		let row = settings.aoData[rowIdx];
+		const row = settings.aoData[rowIdx];
 	
 		// Función para escribir en una celda
 		function cellWrite(cell, col) {
@@ -2914,43 +2905,22 @@ function applyStringTarget(columns, target, fn, def) {
 			cell.innerHTML = _fnGetCellData(settings, rowIdx, col, 'display');
 		}
 	
-		// Función para invalidar tipos de columna
-		function invalidateColumnTypes(cols, colIdx) {
-			if (colIdx !== undefined) {
-				cols[colIdx].sType = null;
-			} else {
-				for (let i = 0, ien = cols.length; i < ien; i++) {
-					cols[i].sType = null;
-				}
-			}
-		}
-	
-		// Función para determinar si se debe leer desde el DOM
+		// Determinar si se debe leer desde el DOM
 		function shouldReadFromDOM(src, rowSrc) {
 			return src === 'dom' || ((!src || src === 'auto') && rowSrc === 'dom');
 		}
 	
-		// Lógica principal de invalidación
+		// Leer datos desde el DOM o actualizar el DOM
 		if (shouldReadFromDOM(src, row.src)) {
-			// Leer datos desde el DOM
-			row._aData = _fnGetRowElements(settings, row, colIdx, colIdx === undefined ? undefined : row._aData).data;
+			row._aData = _fnGetRowElements(
+				settings, row, colIdx, colIdx === undefined ? undefined : row._aData
+			).data;
 		} else {
-			// Leer desde el objeto de datos y actualizar el DOM
-			let cells = row.anCells;
-			if (cells) {
-				if (colIdx !== undefined) {
-					cellWrite(cells[colIdx], colIdx);
-				} else {
-					for (let i = 0, ien = cells.length; i < ien; i++) {
-						cellWrite(cells[i], i);
-					}
-				}
-			}
+			updateDOM(row, colIdx, cellWrite);
 		}
 	
 		// Invalidar datos de ordenamiento y filtrado
-		row._aSortData = null;
-		row._aFilterData = null;
+		invalidateCachedData(row);
 	
 		// Invalidar tipos de columna
 		invalidateColumnTypes(settings.aoColumns, colIdx);
@@ -2961,6 +2931,39 @@ function applyStringTarget(columns, target, fn, def) {
 		}
 	}
 	
+	function updateDOM(row, colIdx, cellWrite) {
+		const cells = row.anCells;
+	
+		if (cells) {
+			if (colIdx !== undefined) {
+				cellWrite(cells[colIdx], colIdx);
+			} else {
+				for (let i = 0, ien = cells.length; i < ien; i++) {
+					cellWrite(cells[i], i);
+				}
+			}
+		}
+	}
+	
+	function invalidateCachedData(row) {
+		row._aSortData = null;
+		row._aFilterData = null;
+	}
+	
+	function invalidateColumnTypes(cols, colIdx) {
+		if (colIdx !== undefined) {
+			cols[colIdx].sType = null;
+		} else {
+			for (let i = 0, ien = cols.length; i < ien; i++) {
+				cols[i].sType = null;
+			}
+		}
+	}
+
+
+
+
+
 	/**
 	 * Build a data source object from an HTML row, reading the contents of the
 	 * cells that are in the row.

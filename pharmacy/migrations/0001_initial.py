@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(null=True)),
                 ('prescribe', models.CharField(max_length=100, null=True)),
                 ('date_precribed', models.DateTimeField(auto_now_add=True)),
-                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=PATIENTS_MODEL )),
+                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=PATIENTS_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -159,7 +159,7 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('admin_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='pharmacy.adminhod')),
-                ('patient_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=PATIENTS_MODEL )),
+                ('patient_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=PATIENTS_MODEL)),
                 ('pharmacist_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='pharmacy.pharmacist')),
             ],
         ),
@@ -188,7 +188,7 @@ class Migration(migrations.Migration):
                 ('instructions', models.TextField(max_length=300, null=True)),
                 ('dispense_at', models.DateTimeField(auto_now_add=True, null=True)),
                 ('drug_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='pharmacy.stock')),
-                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=PATIENTS_MODEL )),
+                ('patient_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to=PATIENTS_MODEL)),
             ],
         ),
     ]
